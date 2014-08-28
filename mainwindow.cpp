@@ -83,7 +83,7 @@ void MainWindow::selectedDayButton( int day )
     this->day = day;
     QString title = "Stundenplan - ";
     setWindowTitle( title.append( days[ day ] ) );
-    char path[ 80 ] = "/home/thomas/.stundenplan/data/";
+    char path[ 80 ] = "~/.stundenplan/data/";
     if ( this->week == 0 ) {
         strcat( path, "even/" );
     } else {
