@@ -13,6 +13,7 @@ private:
     struct stunde parseStunde();
 public:
     FileParser();
+    ~FileParser();
     void loadFile( char *path );
     struct tag parseFile();
     //void parseFile();

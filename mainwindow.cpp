@@ -1,6 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#if __linux
+#   include <unistd.h>
+#   include <sys/types.h>
+#   include <pwd.h>
+#endif
+
 
 MainWindow::MainWindow( QWidget *parent ) :
     QMainWindow( parent ),
@@ -9,6 +15,12 @@ MainWindow::MainWindow( QWidget *parent ) :
     time = new Time();
     fp = new FileParser();
     ui->setupUi( this );
+    QString s;
+#if __linux
+    s.append(getpwuid(getuid())->pw_dir);
+    s.append("/.stundenplan/favicon.png");
+#endif
+    this->setWindowIcon(QIcon(s));
 
     day = time->getDay();
 
@@ -19,6 +31,8 @@ MainWindow::MainWindow( QWidget *parent ) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete time;
+    delete fp;
 }
 
 void MainWindow::setWeekButton( int e )
@@ -34,8 +48,9 @@ void MainWindow::setWeekButton( int e )
         char text[ 80 ];
         sprintf( text, "Fehler: Woche %d", e );
         ui->buttonWeek->setText( text );
-        break;
+        return;
     }
+    this->week = e;
 }
 
 void freeData( struct tag data )
@@ -83,7 +98,11 @@ void MainWindow::selectedDayButton( int day )
     this->day = day;
     QString title = "Stundenplan - ";
     setWindowTitle( title.append( days[ day ] ) );
-    char path[ 80 ] = "~/.stundenplan/data/";
+    char path[ 80 ] = {};
+#if __linux
+    strcat(path, getpwuid(getuid())->pw_dir);
+    strcat(path, "/.stundenplan/data/");
+#endif
     if ( this->week == 0 ) {
         strcat( path, "even/" );
     } else {

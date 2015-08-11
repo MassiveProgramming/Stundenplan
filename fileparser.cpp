@@ -9,6 +9,13 @@ FileParser::FileParser()
     file_contents = NULL;
 }
 
+FileParser::~FileParser()
+{
+    if ( file_contents != NULL ) {
+        free( file_contents );
+    }
+}
+
 void FileParser::loadFile( char *path )
 {
     FILE * pFile;
@@ -19,9 +26,10 @@ void FileParser::loadFile( char *path )
         free( file_contents );
     }
 
-    pFile = fopen( path , "rb" );
+    pFile = fopen( path , "r" );
     if ( pFile == NULL ) {
-        fprintf( stderr, "File error %s", path );
+        fprintf( stderr, "File error %s\n", path );
+        perror("error");
         exit( 1 );
     }
 
